@@ -1,0 +1,87 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
+ */options{  static = true;
+  DEBUG_PARSER = true;
+  DEBUG_TOKEN_MANAGER = true;
+  LOOKAHEAD = 5;}PARSER_BEGIN(dapp)
+public class dapp{  public static void main(String args []) throws ParseException  {    dapp parser = new dapp(System.in);    while (true)    {      System.out.println("갑니다잉 : ");      try      {        switch (dapp.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        dapp.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(dapp)SKIP :{  " "| "\r"| "\t"| "\n"}
+TOKEN :
+{
+   < #LETTER: ["\uAC00" - "\uD7A3"] >
+|  "시작"
+|  "을" | "를"
+|  "포함"
+|  "끝"
+}
+TOKEN :
+{
+  < NAME : (<LETTER >)+ >
+| < NUMERIC_LITERAL : (["+","-"])? (["0"-"9"])+ ("." (["0"-"9"])+)? (["E","e"] (["+","-"])? (["0"-"9"])+)? >
+| < STRING_LITERAL : ("'"|"\"") (["a"-"z","A"-"Z","/","_","0"-"9","[","]"])* ("'"|"\"") >
+| < ARROW : "->" >
+| < LOGICAL_LITERAL : ("true"|"false") >
+| < LESS : "<" >
+| < LESS_EQUAL : "<=" >
+| < GREATER : ">" >
+| < GREATER_EQUAL : ">=" >
+| < EQUAL : "==" >
+| <	NOT_EQUAL : "!=" >
+| < PLUS : "+" >
+| < MINUS : "-" >
+| < MULT : "*" >
+| < DIV : "/" >
+| < POW : "^" >
+| < AND : "&" >
+| < OR : "|" >
+| < NOT : "!" >
+| < ASSIGN : "=" >
+| < COMMA : "," >
+| < L_PAREN : "(" >
+| < R_PAREN : ")" >
+| < L_BRACKET : "[" >
+| < R_BRACKET : "]" >
+| < L_BRACE : "{" >
+| < R_BRACE : "}" >
+| < COLON : ":" >
+| < SEMI_COLON : ";" >
+| < QUESTION : "?" >
+| < DOT : "." >
+| < IDENTIFIER : (["_","a"-"z","A"-"Z"])+ (["a"-"z","A"-"Z","0"-"9","_"])* >
+}
+int one_line() :{}{  (preprocessor())* global()  {    return 0;  }| ";"  {    return 1;  }}
+void preprocessor():
+{}
+{
+  ("\"" <NAME> "\"" | "<" <NAME> ">") ("을"|"를") "포함"}
+
+void global():
+{}
+{
+	(variable_declaration() | function_declaration())* start() (variable_declaration() | function_declaration())* "끝"}
+
+void variable_declaration():
+{}
+{	"."
+}
+
+void function_declaration():
+{}
+{
+	"."
+}
+
+void start():
+{}
+{
+	"시작" sentences()}  
+void sentences():
+{}
+{
+	"{" sentences() "}"| sentence()
+}
+
+void sentence():
+{}
+{
+	<NAME> "."
+}
