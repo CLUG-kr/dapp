@@ -11,69 +11,69 @@ public interface dappConstants {
   /** RegularExpression Id. */
   int LETTER = 5;
   /** RegularExpression Id. */
-  int NAME = 11;
+  int NAME = 28;
   /** RegularExpression Id. */
-  int NUMERIC_LITERAL = 12;
+  int NUMERIC_LITERAL = 29;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 13;
+  int STRING_LITERAL = 30;
   /** RegularExpression Id. */
-  int ARROW = 14;
+  int ARROW = 31;
   /** RegularExpression Id. */
-  int LOGICAL_LITERAL = 15;
+  int LOGICAL_LITERAL = 32;
   /** RegularExpression Id. */
-  int LESS = 16;
+  int LESS = 33;
   /** RegularExpression Id. */
-  int LESS_EQUAL = 17;
+  int LESS_EQUAL = 34;
   /** RegularExpression Id. */
-  int GREATER = 18;
+  int GREATER = 35;
   /** RegularExpression Id. */
-  int GREATER_EQUAL = 19;
+  int GREATER_EQUAL = 36;
   /** RegularExpression Id. */
-  int EQUAL = 20;
+  int EQUAL = 37;
   /** RegularExpression Id. */
-  int NOT_EQUAL = 21;
+  int NOT_EQUAL = 38;
   /** RegularExpression Id. */
-  int PLUS = 22;
+  int PLUS = 39;
   /** RegularExpression Id. */
-  int MINUS = 23;
+  int MINUS = 40;
   /** RegularExpression Id. */
-  int MULT = 24;
+  int MULT = 41;
   /** RegularExpression Id. */
-  int DIV = 25;
+  int DIV = 42;
   /** RegularExpression Id. */
-  int POW = 26;
+  int POW = 43;
   /** RegularExpression Id. */
-  int AND = 27;
+  int AND = 44;
   /** RegularExpression Id. */
-  int OR = 28;
+  int OR = 45;
   /** RegularExpression Id. */
-  int NOT = 29;
+  int NOT = 46;
   /** RegularExpression Id. */
-  int ASSIGN = 30;
+  int ASSIGN = 47;
   /** RegularExpression Id. */
-  int COMMA = 31;
+  int COMMA = 48;
   /** RegularExpression Id. */
-  int L_PAREN = 32;
+  int L_PAREN = 49;
   /** RegularExpression Id. */
-  int R_PAREN = 33;
+  int R_PAREN = 50;
   /** RegularExpression Id. */
-  int L_BRACKET = 34;
+  int L_BRACKET = 51;
   /** RegularExpression Id. */
-  int R_BRACKET = 35;
+  int R_BRACKET = 52;
   /** RegularExpression Id. */
-  int L_BRACE = 36;
+  int L_BRACE = 53;
   /** RegularExpression Id. */
-  int R_BRACE = 37;
+  int R_BRACE = 54;
   /** RegularExpression Id. */
-  int COLON = 38;
+  int COLON = 55;
   /** RegularExpression Id. */
-  int SEMI_COLON = 39;
+  int SEMI_COLON = 56;
   /** RegularExpression Id. */
-  int QUESTION = 40;
+  int QUESTION = 57;
   /** RegularExpression Id. */
-  int DOT = 41;
+  int DOT = 58;
   /** RegularExpression Id. */
-  int IDENTIFIER = 42;
+  int IDENTIFIER = 59;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -89,8 +89,25 @@ public interface dappConstants {
     "\"\\uc2dc\\uc791\"",
     "\"\\uc744\"",
     "\"\\ub97c\"",
+    "\"\\ub85c\"",
+    "\"\\uc73c\\ub85c\"",
     "\"\\ud3ec\\ud568\"",
     "\"\\ub05d\"",
+    "\"\\uc815\\uc218\\ud615\"",
+    "\"\\uc2e4\\uc218\\ud615\"",
+    "\"\\ube48\\ud615\"",
+    "\"\\ub9de\\ub2c8\\ud615\"",
+    "\"\\uae00\\uc790\\ud615\"",
+    "\"\\ubb38\\uc7a5\\ud615\"",
+    "\"\\uc0dd\\uc131\"",
+    "\"\\ub9cc\\uc57d\"",
+    "\"\\ub77c\\uba74\"",
+    "\"\\uc544\\ub2c8\\uace0\"",
+    "\"\\uc544\\ub2c8\\uba74\"",
+    "\"\\uadf8\\uce58\\ub9cc\"",
+    "\"\\ud558\\uba74\"",
+    "\"\\ud558\\ub294\\uac78\"",
+    "\"\\uc77c \\ub54c\"",
     "<NAME>",
     "<NUMERIC_LITERAL>",
     "<STRING_LITERAL>",
@@ -124,6 +141,8 @@ public interface dappConstants {
     "\".\"",
     "<IDENTIFIER>",
     "\"\\\"\"",
+    "\"\\\'\"",
+    "\"%\"",
   };
 
 }
