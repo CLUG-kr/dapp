@@ -2,12 +2,22 @@
 import java.io.*;
 
 public class dapp implements dappConstants {
+  static int depth = 0;
+  public static String indentation()
+  {
+     String temp = "";
+       for(int i = 0; i<depth; i++)
+       {
+             temp += "\u005ct";
+       }
+       return temp;
+  }
   static String resultStr = "";
   public static void main(String args []) throws ParseException
   {
     dapp parser = new dapp(System.in);
     System.out.println("\uac11\ub2c8\ub2e4\uc694 : ");
-        try {
+     try {
       parser.one_line();
       System.out.println("OK.");
     } catch(ParseException e) {
@@ -22,7 +32,7 @@ public class dapp implements dappConstants {
       bw.close();
     } catch(Exception e) {
        e.printStackTrace();
-        }
+     }
   }
 
   static final public void one_line() throws ParseException {
@@ -41,9 +51,9 @@ public class dapp implements dappConstants {
   static final public void preprocessor() throws ParseException {
                      Token t;
     if (jj_2_6(2)) {
-      jj_consume_token(60);
+      jj_consume_token(63);
       t = jj_consume_token(NAME);
-      jj_consume_token(60);
+      jj_consume_token(63);
       if (jj_2_2(2)) {
         jj_consume_token(7);
       } else if (jj_2_3(2)) {
@@ -53,7 +63,7 @@ public class dapp implements dappConstants {
         throw new ParseException();
       }
       jj_consume_token(11);
-                                           resultStr += "#include " + "\u005c"" + t.toString() + "\u005c"";
+                                           resultStr += "#include " + "\u005c"" + KoreanRomanizer.romanize(t.toString()) + "\u005c"" + "\u005cn";
     } else if (jj_2_7(2)) {
       jj_consume_token(LESS);
       t = jj_consume_token(NAME);
@@ -67,7 +77,7 @@ public class dapp implements dappConstants {
         throw new ParseException();
       }
       jj_consume_token(11);
-                                           resultStr += "#include <" + t.toString() + ">";
+                                           resultStr += "#include <" + KoreanRomanizer.romanize(t.toString()) + ">" + "\u005cn";
     } else {
       jj_consume_token(-1);
       throw new ParseException();
@@ -112,10 +122,12 @@ public class dapp implements dappConstants {
   }
 
   static final public void variable_declaration() throws ParseException {
+ Token a; Token b = null;
     data_type();
-    jj_consume_token(61);
-    jj_consume_token(NAME);
-    jj_consume_token(61);
+    jj_consume_token(64);
+    a = jj_consume_token(NAME);
+    jj_consume_token(64);
+                                     resultStr += KoreanRomanizer.romanize(a.toString());
     if (jj_2_16(2)) {
       if (jj_2_14(2)) {
         jj_consume_token(7);
@@ -130,9 +142,10 @@ public class dapp implements dappConstants {
     }
     if (jj_2_19(2)) {
       if (jj_2_17(2)) {
-        jj_consume_token(61);
-        jj_consume_token(NAME);
-        jj_consume_token(61);
+        jj_consume_token(64);
+        b = jj_consume_token(NAME);
+                       resultStr += " = " + KoreanRomanizer.romanize(b.toString());
+        jj_consume_token(64);
         jj_consume_token(9);
       } else if (jj_2_18(2)) {
         jj_consume_token(10);
@@ -145,25 +158,53 @@ public class dapp implements dappConstants {
     }
     jj_consume_token(19);
     jj_consume_token(DOT);
+               resultStr += ";" ;
   }
 
   static final public void function_declaration() throws ParseException {
-    jj_consume_token(DOT);
+    data_type();
+    jj_consume_token(NAME);
+    jj_consume_token(L_PAREN);
+    if (jj_2_20(2)) {
+      data_type();
+      jj_consume_token(NAME);
+    } else {
+      ;
+    }
+    label_4:
+    while (true) {
+      if (jj_2_21(2)) {
+        ;
+      } else {
+        break label_4;
+      }
+      jj_consume_token(COMMA);
+      data_type();
+      jj_consume_token(NAME);
+    }
+    jj_consume_token(R_PAREN);
+    sentences();
   }
 
   static final public void data_type() throws ParseException {
-    if (jj_2_20(2)) {
+    if (jj_2_22(2)) {
       jj_consume_token(13);
-    } else if (jj_2_21(2)) {
-      jj_consume_token(14);
-    } else if (jj_2_22(2)) {
-      jj_consume_token(15);
+            resultStr += "int ";
     } else if (jj_2_23(2)) {
-      jj_consume_token(16);
+      jj_consume_token(14);
+               resultStr += "double ";
     } else if (jj_2_24(2)) {
-      jj_consume_token(17);
+      jj_consume_token(15);
+              resultStr += "void ";
     } else if (jj_2_25(2)) {
+      jj_consume_token(16);
+               resultStr += "bool ";
+    } else if (jj_2_26(2)) {
+      jj_consume_token(17);
+               resultStr += "char ";
+    } else if (jj_2_27(2)) {
       jj_consume_token(18);
+               resultStr += "string ";
     } else {
       jj_consume_token(-1);
       throw new ParseException();
@@ -172,34 +213,42 @@ public class dapp implements dappConstants {
 
   static final public void start() throws ParseException {
     jj_consume_token(6);
-              resultStr += "int main()" + "\u005cn{";
+    jj_consume_token(L_BRACE);
+             resultStr += "int main()" + indentation(); resultStr += "{\u005cn"; depth++;
     sentences();
-                                                                resultStr += "\u005cnreturn 0;\u005cn}";
+                resultStr +=  "\u005cn" + indentation() + "return 0;\u005cn";
+    jj_consume_token(R_BRACE);
+         depth--; resultStr += indentation(); resultStr += "}\u005cn";
   }
 
   static final public void if_statement() throws ParseException {
     jj_consume_token(20);
     jj_consume_token(L_PAREN);
+                 resultStr += "if (";
     logical_statement();
     jj_consume_token(R_PAREN);
     jj_consume_token(21);
+                                     resultStr += ")\u005cn";
     sentences();
-    label_4:
+    label_5:
     while (true) {
-      if (jj_2_26(2)) {
+      if (jj_2_28(2)) {
         ;
       } else {
-        break label_4;
+        break label_5;
       }
       jj_consume_token(22);
       jj_consume_token(L_PAREN);
+                    resultStr += " else if (";
       logical_statement();
       jj_consume_token(R_PAREN);
       jj_consume_token(21);
+                                       resultStr += ")";
       sentences();
     }
-    if (jj_2_27(2)) {
+    if (jj_2_29(2)) {
       jj_consume_token(23);
+                resultStr += " else";
       sentences();
     } else {
       ;
@@ -207,64 +256,46 @@ public class dapp implements dappConstants {
   }
 
   static final public void while_statement() throws ParseException {
-    if (jj_2_28(2)) {
-      jj_consume_token(24);
-      jj_consume_token(L_PAREN);
-      logical_statement();
-      jj_consume_token(R_PAREN);
-      jj_consume_token(25);
-      sentences();
-      jj_consume_token(26);
-      jj_consume_token(NOT);
-    } else if (jj_2_29(2)) {
-      jj_consume_token(L_PAREN);
-      sentences();
-      jj_consume_token(R_PAREN);
-      jj_consume_token(27);
-      jj_consume_token(L_PAREN);
-      logical_statement();
-      jj_consume_token(R_PAREN);
-      jj_consume_token(25);
-      sentences();
-      jj_consume_token(LESS);
-      sentences();
-      jj_consume_token(GREATER);
-      jj_consume_token(26);
-      jj_consume_token(NOT);
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
-    }
+    jj_consume_token(24);
+    jj_consume_token(L_PAREN);
+           resultStr += "while (";
+    logical_statement();
+    jj_consume_token(R_PAREN);
+    jj_consume_token(25);
+                                                                  resultStr += ")\u005cn";
+    sentences();
+    jj_consume_token(26);
+    jj_consume_token(NOT);
   }
 
   static final public void logical_statement() throws ParseException {
  Token a; Token b;
     a = jj_consume_token(NAME);
-                resultStr += a.toString();
+                resultStr += KoreanRomanizer.romanize(a.toString());
     logical_operator();
     b = jj_consume_token(NAME);
-                                                                             resultStr += b.toString();
+                                                                                                       resultStr += KoreanRomanizer.romanize(b.toString());
   }
 
   static final public void logical_operator() throws ParseException {
     if (jj_2_30(2)) {
       jj_consume_token(ASSIGN);
-             resultStr += "=";
+          resultStr += "==";
     } else if (jj_2_31(2)) {
       jj_consume_token(LESS);
-                                      resultStr += "<";
+                                    resultStr += "<";
     } else if (jj_2_32(2)) {
       jj_consume_token(GREATER);
-                                                               resultStr += ">";
+                                                             resultStr += ">";
     } else if (jj_2_33(2)) {
       jj_consume_token(LESS_EQUAL);
-                                                                                         resultStr += "<=";
+                                                                                       resultStr += "<=";
     } else if (jj_2_34(2)) {
       jj_consume_token(GREATER_EQUAL);
-                                                                                                                     resultStr += ">=";
+                                                                                                                   resultStr += ">=";
     } else if (jj_2_35(2)) {
       jj_consume_token(NOT_EQUAL);
-                                                                                                                                                resultStr += "!=";
+                                                                                                                                              resultStr += "!=";
     } else {
       jj_consume_token(-1);
       throw new ParseException();
@@ -274,19 +305,19 @@ public class dapp implements dappConstants {
   static final public void binary_operator() throws ParseException {
     if (jj_2_36(2)) {
       jj_consume_token(PLUS);
-             resultStr += "+";
+          resultStr += "+";
     } else if (jj_2_37(2)) {
       jj_consume_token(MULT);
-                                      resultStr += "*";
+                                   resultStr += "*";
     } else if (jj_2_38(2)) {
       jj_consume_token(MINUS);
-                                                               resultStr += "-";
+                                                            resultStr += "-";
     } else if (jj_2_39(2)) {
       jj_consume_token(DIV);
-                                                                                        resultStr += "/";
+                                                                                     resultStr += "/";
     } else if (jj_2_40(2)) {
-      jj_consume_token(62);
-                                                                                                                 resultStr += "%";
+      jj_consume_token(65);
+                                                                                                              resultStr += "%";
     } else {
       jj_consume_token(-1);
       throw new ParseException();
@@ -296,22 +327,26 @@ public class dapp implements dappConstants {
   static final public void sentences() throws ParseException {
     if (jj_2_42(2)) {
       jj_consume_token(L_BRACE);
+          resultStr += indentation(); resultStr += "{\u005cn"; depth++;
       sentences();
       jj_consume_token(R_BRACE);
+                                                                                         depth--; resultStr += indentation(); resultStr += "}\u005cn";
     } else {
-      label_5:
+      label_6:
       while (true) {
         if (jj_2_41(2)) {
           ;
         } else {
-          break label_5;
+          break label_6;
         }
         sentence();
       }
+                    resultStr += indentation() + "\u005cn";
     }
   }
 
   static final public void sentence() throws ParseException {
+    resultStr += indentation();
     if (jj_2_43(2)) {
       variable_declaration();
     } else if (jj_2_44(2)) {
@@ -321,11 +356,30 @@ public class dapp implements dappConstants {
     } else if (jj_2_46(2)) {
       while_statement();
     } else if (jj_2_47(2)) {
-      jj_consume_token(NAME);
+      input_statement();
     } else {
       jj_consume_token(-1);
       throw new ParseException();
     }
+  }
+
+  static final public void input_statement() throws ParseException {
+Token a;
+Token b;
+    a = jj_consume_token(NAME);
+    jj_consume_token(28);
+    b = jj_consume_token(NAME);
+    if (jj_2_48(2)) {
+      jj_consume_token(7);
+    } else if (jj_2_49(2)) {
+      jj_consume_token(8);
+    } else {
+      jj_consume_token(-1);
+      throw new ParseException();
+    }
+    jj_consume_token(29);
+    jj_consume_token(DOT);
+   resultStr += KoreanRomanizer.romanize(a.toString()) + " = " + KoreanRomanizer.romanize(b.toString()) + ";";
   }
 
   static private boolean jj_2_1(int xla) {
@@ -657,45 +711,339 @@ public class dapp implements dappConstants {
     finally { jj_save(46, xla); }
   }
 
+  static private boolean jj_2_48(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_48(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(47, xla); }
+  }
+
+  static private boolean jj_2_49(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_49(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(48, xla); }
+  }
+
+  static private boolean jj_3_33() {
+    if (jj_scan_token(LESS_EQUAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_29() {
+    if (jj_scan_token(23)) return true;
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_44() {
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_28() {
+    if (jj_scan_token(22)) return true;
+    if (jj_scan_token(L_PAREN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_14() {
+    if (jj_scan_token(20)) return true;
+    if (jj_scan_token(L_PAREN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_20() {
+    if (jj_3R_10()) return true;
+    if (jj_scan_token(NAME)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_49() {
+    if (jj_scan_token(8)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_48() {
+    if (jj_scan_token(7)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_38() {
+    if (jj_scan_token(MINUS)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_27() {
+    if (jj_scan_token(18)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_26() {
+    if (jj_scan_token(17)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_25() {
+    if (jj_scan_token(16)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_32() {
+    if (jj_scan_token(GREATER)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_24() {
+    if (jj_scan_token(15)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_43() {
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_10() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_23() {
+    if (jj_scan_token(14)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_10() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_22()) {
+    jj_scanpos = xsp;
+    if (jj_3_23()) {
+    jj_scanpos = xsp;
+    if (jj_3_24()) {
+    jj_scanpos = xsp;
+    if (jj_3_25()) {
+    jj_scanpos = xsp;
+    if (jj_3_26()) {
+    jj_scanpos = xsp;
+    if (jj_3_27()) return true;
+    }
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3_22() {
+    if (jj_scan_token(13)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_5() {
+    if (jj_scan_token(8)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_3() {
+    if (jj_scan_token(8)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_4() {
+    if (jj_scan_token(7)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_2() {
+    if (jj_scan_token(7)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_47() {
+    if (jj_3R_16()) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_9() {
+    if (jj_3R_10()) return true;
+    if (jj_scan_token(NAME)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_35() {
+    if (jj_scan_token(NOT_EQUAL)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_17() {
+    if (jj_scan_token(64)) return true;
+    if (jj_scan_token(NAME)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_19() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_17()) {
+    jj_scanpos = xsp;
+    if (jj_3_18()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3_37() {
+    if (jj_scan_token(MULT)) return true;
+    return false;
+  }
+
   static private boolean jj_3R_8() {
+    if (jj_3R_10()) return true;
+    if (jj_scan_token(64)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_15() {
+    if (jj_scan_token(8)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_18() {
+    if (jj_scan_token(10)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_31() {
+    if (jj_scan_token(LESS)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_16() {
+    if (jj_scan_token(NAME)) return true;
+    if (jj_scan_token(28)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_9() {
+    if (jj_3R_8()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_8() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_9()) {
+    jj_scanpos = xsp;
+    if (jj_3_10()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3_16() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_14()) {
+    jj_scanpos = xsp;
+    if (jj_3_15()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3_14() {
+    if (jj_scan_token(7)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_46() {
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_7() {
+    if (jj_scan_token(LESS)) return true;
+    if (jj_scan_token(NAME)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_12() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_43()) {
+    jj_scanpos = xsp;
+    if (jj_3_44()) {
+    jj_scanpos = xsp;
+    if (jj_3_45()) {
+    jj_scanpos = xsp;
+    if (jj_3_46()) {
+    jj_scanpos = xsp;
+    if (jj_3_47()) return true;
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  static private boolean jj_3R_7() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_6()) {
+    jj_scanpos = xsp;
+    if (jj_3_7()) return true;
+    }
+    return false;
+  }
+
+  static private boolean jj_3_41() {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_6() {
+    if (jj_scan_token(63)) return true;
+    if (jj_scan_token(NAME)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_17() {
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3_41()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  static private boolean jj_3_13() {
+    if (jj_3R_9()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_40() {
+    if (jj_scan_token(65)) return true;
+    return false;
+  }
+
+  static private boolean jj_3R_11() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_42()) {
     jj_scanpos = xsp;
-    if (jj_3R_14()) return true;
+    if (jj_3R_17()) return true;
     }
     return false;
   }
 
   static private boolean jj_3_42() {
     if (jj_scan_token(L_BRACE)) return true;
-    if (jj_3R_8()) return true;
+    if (jj_3R_11()) return true;
     if (jj_scan_token(R_BRACE)) return true;
     return false;
   }
 
-  static private boolean jj_3_40() {
-    if (jj_scan_token(62)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_47() {
-    if (jj_scan_token(NAME)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_12() {
+  static private boolean jj_3_1() {
     if (jj_3R_7()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_11() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_12()) {
-    jj_scanpos = xsp;
-    if (jj_3_13()) return true;
-    }
     return false;
   }
 
@@ -709,12 +1057,12 @@ public class dapp implements dappConstants {
     return false;
   }
 
-  static private boolean jj_3_25() {
-    if (jj_scan_token(18)) return true;
+  static private boolean jj_3_45() {
+    if (jj_3R_14()) return true;
     return false;
   }
 
-  static private boolean jj_3R_15() {
+  static private boolean jj_3R_18() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_30()) {
@@ -741,304 +1089,41 @@ public class dapp implements dappConstants {
     return false;
   }
 
-  static private boolean jj_3_24() {
-    if (jj_scan_token(17)) return true;
+  static private boolean jj_3_21() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_10()) return true;
     return false;
   }
 
-  static private boolean jj_3_17() {
-    if (jj_scan_token(61)) return true;
+  static private boolean jj_3R_13() {
     if (jj_scan_token(NAME)) return true;
+    if (jj_3R_18()) return true;
     return false;
   }
 
-  static private boolean jj_3_19() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_17()) {
-    jj_scanpos = xsp;
-    if (jj_3_18()) return true;
-    }
-    return false;
-  }
-
-  static private boolean jj_3_46() {
-    if (jj_3R_12()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_23() {
-    if (jj_scan_token(16)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_10() {
-    if (jj_scan_token(NAME)) return true;
-    if (jj_3R_15()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_15() {
-    if (jj_scan_token(8)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_29() {
-    if (jj_scan_token(L_PAREN)) return true;
+  static private boolean jj_3_12() {
     if (jj_3R_8()) return true;
-    if (jj_scan_token(R_PAREN)) return true;
     return false;
   }
 
-  static private boolean jj_3R_12() {
+  static private boolean jj_3_11() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3_28()) {
+    if (jj_3_12()) {
     jj_scanpos = xsp;
-    if (jj_3_29()) return true;
+    if (jj_3_13()) return true;
     }
     return false;
   }
 
-  static private boolean jj_3_39() {
-    if (jj_scan_token(DIV)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_28() {
+  static private boolean jj_3R_15() {
     if (jj_scan_token(24)) return true;
     if (jj_scan_token(L_PAREN)) return true;
     return false;
   }
 
-  static private boolean jj_3_16() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_14()) {
-    jj_scanpos = xsp;
-    if (jj_3_15()) return true;
-    }
-    return false;
-  }
-
-  static private boolean jj_3_14() {
-    if (jj_scan_token(7)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_22() {
-    if (jj_scan_token(15)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_27() {
-    if (jj_scan_token(23)) return true;
-    if (jj_3R_8()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_26() {
-    if (jj_scan_token(22)) return true;
-    if (jj_scan_token(L_PAREN)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_33() {
-    if (jj_scan_token(LESS_EQUAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_11() {
-    if (jj_scan_token(20)) return true;
-    if (jj_scan_token(L_PAREN)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_10() {
-    if (jj_scan_token(58)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_21() {
-    if (jj_scan_token(14)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_45() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_13() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_20()) {
-    jj_scanpos = xsp;
-    if (jj_3_21()) {
-    jj_scanpos = xsp;
-    if (jj_3_22()) {
-    jj_scanpos = xsp;
-    if (jj_3_23()) {
-    jj_scanpos = xsp;
-    if (jj_3_24()) {
-    jj_scanpos = xsp;
-    if (jj_3_25()) return true;
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  static private boolean jj_3_20() {
-    if (jj_scan_token(13)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_5() {
-    if (jj_scan_token(8)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_3() {
-    if (jj_scan_token(8)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_38() {
-    if (jj_scan_token(MINUS)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_4() {
-    if (jj_scan_token(7)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_2() {
-    if (jj_scan_token(7)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_32() {
-    if (jj_scan_token(GREATER)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_7() {
-    if (jj_3R_13()) return true;
-    if (jj_scan_token(61)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_44() {
-    if (jj_3R_10()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_9() {
-    if (jj_3R_7()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_8() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_9()) {
-    jj_scanpos = xsp;
-    if (jj_3_10()) return true;
-    }
-    return false;
-  }
-
-  static private boolean jj_3_35() {
-    if (jj_scan_token(NOT_EQUAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_41() {
-    if (jj_3R_9()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_14() {
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_41()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  static private boolean jj_3_7() {
-    if (jj_scan_token(LESS)) return true;
-    if (jj_scan_token(NAME)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_13() {
-    if (jj_scan_token(58)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_37() {
-    if (jj_scan_token(MULT)) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_6() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_6()) {
-    jj_scanpos = xsp;
-    if (jj_3_7()) return true;
-    }
-    return false;
-  }
-
-  static private boolean jj_3_6() {
-    if (jj_scan_token(60)) return true;
-    if (jj_scan_token(NAME)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_1() {
-    if (jj_3R_6()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_31() {
-    if (jj_scan_token(LESS)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_43() {
-    if (jj_3R_7()) return true;
-    return false;
-  }
-
-  static private boolean jj_3R_9() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_43()) {
-    jj_scanpos = xsp;
-    if (jj_3_44()) {
-    jj_scanpos = xsp;
-    if (jj_3_45()) {
-    jj_scanpos = xsp;
-    if (jj_3_46()) {
-    jj_scanpos = xsp;
-    if (jj_3_47()) return true;
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  static private boolean jj_3_18() {
-    if (jj_scan_token(10)) return true;
+  static private boolean jj_3_39() {
+    if (jj_scan_token(DIV)) return true;
     return false;
   }
 
@@ -1057,9 +1142,11 @@ public class dapp implements dappConstants {
   static final private int[] jj_la1 = new int[0];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
+  static private int[] jj_la1_2;
   static {
       jj_la1_init_0();
       jj_la1_init_1();
+      jj_la1_init_2();
    }
    private static void jj_la1_init_0() {
       jj_la1_0 = new int[] {};
@@ -1067,7 +1154,10 @@ public class dapp implements dappConstants {
    private static void jj_la1_init_1() {
       jj_la1_1 = new int[] {};
    }
-  static final private JJCalls[] jj_2_rtns = new JJCalls[47];
+   private static void jj_la1_init_2() {
+      jj_la1_2 = new int[] {};
+   }
+  static final private JJCalls[] jj_2_rtns = new JJCalls[49];
   static private boolean jj_rescan = false;
   static private int jj_gc = 0;
 
@@ -1272,7 +1362,7 @@ public class dapp implements dappConstants {
   /** Generate ParseException. */
   static public ParseException generateParseException() {
     jj_expentries.clear();
-    boolean[] la1tokens = new boolean[63];
+    boolean[] la1tokens = new boolean[66];
     if (jj_kind >= 0) {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
@@ -1286,10 +1376,13 @@ public class dapp implements dappConstants {
           if ((jj_la1_1[i] & (1<<j)) != 0) {
             la1tokens[32+j] = true;
           }
+          if ((jj_la1_2[i] & (1<<j)) != 0) {
+            la1tokens[64+j] = true;
+          }
         }
       }
     }
-    for (int i = 0; i < 63; i++) {
+    for (int i = 0; i < 66; i++) {
       if (la1tokens[i]) {
         jj_expentry = new int[1];
         jj_expentry[0] = i;
@@ -1316,7 +1409,7 @@ public class dapp implements dappConstants {
 
   static private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 47; i++) {
+    for (int i = 0; i < 49; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -1370,6 +1463,8 @@ public class dapp implements dappConstants {
             case 44: jj_3_45(); break;
             case 45: jj_3_46(); break;
             case 46: jj_3_47(); break;
+            case 47: jj_3_48(); break;
+            case 48: jj_3_49(); break;
           }
         }
         p = p.next;

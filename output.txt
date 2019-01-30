@@ -1,0 +1,14 @@
+#include "iostream"
+int main(){
+	if (Da_eumju==Magamil)
+	{
+		while (Hanil<Haril)
+		{
+			Oneul = Bamsaemkoding;			
+		}
+		
+	}
+	int Kaenkeopi = Bamsaem;	
+
+	return 0;
+}
