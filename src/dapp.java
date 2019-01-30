@@ -172,7 +172,9 @@ public class dapp implements dappConstants {
 
   static final public void start() throws ParseException {
     jj_consume_token(6);
+              resultStr += "int main()" + "\u005cn{";
     sentences();
+                                                                resultStr += "\u005cnreturn 0;\u005cn}";
   }
 
   static final public void if_statement() throws ParseException {
@@ -236,24 +238,33 @@ public class dapp implements dappConstants {
   }
 
   static final public void logical_statement() throws ParseException {
-    jj_consume_token(NAME);
+ Token a; Token b;
+    a = jj_consume_token(NAME);
+                resultStr += a.toString();
     logical_operator();
-    jj_consume_token(NAME);
+    b = jj_consume_token(NAME);
+                                                                             resultStr += b.toString();
   }
 
   static final public void logical_operator() throws ParseException {
     if (jj_2_30(2)) {
       jj_consume_token(ASSIGN);
+             resultStr += "=";
     } else if (jj_2_31(2)) {
       jj_consume_token(LESS);
+                                      resultStr += "<";
     } else if (jj_2_32(2)) {
       jj_consume_token(GREATER);
+                                                               resultStr += ">";
     } else if (jj_2_33(2)) {
       jj_consume_token(LESS_EQUAL);
+                                                                                         resultStr += "<=";
     } else if (jj_2_34(2)) {
       jj_consume_token(GREATER_EQUAL);
+                                                                                                                     resultStr += ">=";
     } else if (jj_2_35(2)) {
       jj_consume_token(NOT_EQUAL);
+                                                                                                                                                resultStr += "!=";
     } else {
       jj_consume_token(-1);
       throw new ParseException();
@@ -263,14 +274,19 @@ public class dapp implements dappConstants {
   static final public void binary_operator() throws ParseException {
     if (jj_2_36(2)) {
       jj_consume_token(PLUS);
+             resultStr += "+";
     } else if (jj_2_37(2)) {
       jj_consume_token(MULT);
+                                      resultStr += "*";
     } else if (jj_2_38(2)) {
       jj_consume_token(MINUS);
+                                                               resultStr += "-";
     } else if (jj_2_39(2)) {
       jj_consume_token(DIV);
+                                                                                        resultStr += "/";
     } else if (jj_2_40(2)) {
       jj_consume_token(62);
+                                                                                                                 resultStr += "%";
     } else {
       jj_consume_token(-1);
       throw new ParseException();
@@ -658,13 +674,8 @@ public class dapp implements dappConstants {
     return false;
   }
 
-  static private boolean jj_3_37() {
-    if (jj_scan_token(MULT)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_32() {
-    if (jj_scan_token(GREATER)) return true;
+  static private boolean jj_3_40() {
+    if (jj_scan_token(62)) return true;
     return false;
   }
 
@@ -688,13 +699,13 @@ public class dapp implements dappConstants {
     return false;
   }
 
-  static private boolean jj_3_36() {
-    if (jj_scan_token(PLUS)) return true;
+  static private boolean jj_3_34() {
+    if (jj_scan_token(GREATER_EQUAL)) return true;
     return false;
   }
 
-  static private boolean jj_3_31() {
-    if (jj_scan_token(LESS)) return true;
+  static private boolean jj_3_36() {
+    if (jj_scan_token(PLUS)) return true;
     return false;
   }
 
@@ -789,6 +800,11 @@ public class dapp implements dappConstants {
     return false;
   }
 
+  static private boolean jj_3_39() {
+    if (jj_scan_token(DIV)) return true;
+    return false;
+  }
+
   static private boolean jj_3_28() {
     if (jj_scan_token(24)) return true;
     if (jj_scan_token(L_PAREN)) return true;
@@ -824,6 +840,11 @@ public class dapp implements dappConstants {
   static private boolean jj_3_26() {
     if (jj_scan_token(22)) return true;
     if (jj_scan_token(L_PAREN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_33() {
+    if (jj_scan_token(LESS_EQUAL)) return true;
     return false;
   }
 
@@ -885,6 +906,11 @@ public class dapp implements dappConstants {
     return false;
   }
 
+  static private boolean jj_3_38() {
+    if (jj_scan_token(MINUS)) return true;
+    return false;
+  }
+
   static private boolean jj_3_4() {
     if (jj_scan_token(7)) return true;
     return false;
@@ -892,6 +918,11 @@ public class dapp implements dappConstants {
 
   static private boolean jj_3_2() {
     if (jj_scan_token(7)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_32() {
+    if (jj_scan_token(GREATER)) return true;
     return false;
   }
 
@@ -921,6 +952,11 @@ public class dapp implements dappConstants {
     return false;
   }
 
+  static private boolean jj_3_35() {
+    if (jj_scan_token(NOT_EQUAL)) return true;
+    return false;
+  }
+
   static private boolean jj_3_41() {
     if (jj_3R_9()) return true;
     return false;
@@ -946,8 +982,8 @@ public class dapp implements dappConstants {
     return false;
   }
 
-  static private boolean jj_3_35() {
-    if (jj_scan_token(NOT_EQUAL)) return true;
+  static private boolean jj_3_37() {
+    if (jj_scan_token(MULT)) return true;
     return false;
   }
 
@@ -958,11 +994,6 @@ public class dapp implements dappConstants {
     jj_scanpos = xsp;
     if (jj_3_7()) return true;
     }
-    return false;
-  }
-
-  static private boolean jj_3_40() {
-    if (jj_scan_token(62)) return true;
     return false;
   }
 
@@ -977,13 +1008,8 @@ public class dapp implements dappConstants {
     return false;
   }
 
-  static private boolean jj_3_34() {
-    if (jj_scan_token(GREATER_EQUAL)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_39() {
-    if (jj_scan_token(DIV)) return true;
+  static private boolean jj_3_31() {
+    if (jj_scan_token(LESS)) return true;
     return false;
   }
 
@@ -1008,16 +1034,6 @@ public class dapp implements dappConstants {
     }
     }
     }
-    return false;
-  }
-
-  static private boolean jj_3_38() {
-    if (jj_scan_token(MINUS)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_33() {
-    if (jj_scan_token(LESS_EQUAL)) return true;
     return false;
   }
 

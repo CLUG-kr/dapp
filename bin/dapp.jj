@@ -136,7 +136,7 @@ void data_type():
 void start():
 {}
 {
-	"시작" {resultStr += "int main()" + "\n{" } sentences() {resultStr += "\nreturn 0;\n}"}
+	"시작" {resultStr += "int main()" + "\n{"; } sentences() {resultStr += "\nreturn 0;\n}";}
 }  
 
 void if_statement():
@@ -158,19 +158,19 @@ void while_statement():
 void logical_statement():
 {Token a; Token b;}
 {
-  (a = <NAME>) logical_operator() (b = <NAME>) {resultStr += 
+  (a = <NAME>) {resultStr += a.toString();} logical_operator() (b = <NAME>) {resultStr += b.toString();}
 }
 
 void logical_operator():
 {}
 {
-  	"=" | "<" | ">" | "<=" | ">="  | "!=" 
+  	"=" {resultStr += "=";}| "<" {resultStr += "<";}| ">" {resultStr += ">";}| "<=" {resultStr += "<=";}| ">="  {resultStr += ">=";}| "!=" {resultStr += "!=";} 
 }
 
 void binary_operator():
 {}
 {
-  	"+" | "*" | "-" | "/" | "%" 
+  	"+" {resultStr += "+";}| "*" {resultStr += "*";}| "-" {resultStr += "-";}| "/" {resultStr += "/";}| "%" {resultStr += "%";}
 }
 
 void sentences():
