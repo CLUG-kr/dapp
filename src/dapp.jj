@@ -59,11 +59,14 @@ TOKEN :
 |  "생성"
 |  "만약"  | "라면" | "아니고" | "아니면"
 | "그치만" | "하면" | "하는걸" | "일 때"
+|  "에" | "대입"
 }
 
 TOKEN :
 {
-  < NAME : (<LETTER >)+ >
+  < DOT : "." >
+| < #ENG_NAME : ["a"-"z","A"-"Z",".","_","0"-"9"] >
+| < NAME :  ( <LETTER > | <ENG_NAME> )+ >
 | < NUMERIC_LITERAL : (["+","-"])? (["0"-"9"])+ ("." (["0"-"9"])+)? (["E","e"] (["+","-"])? (["0"-"9"])+)? >
 | < STRING_LITERAL : ("'"|"\"") (["a"-"z","A"-"Z","/","_","0"-"9","[","]"])* ("'"|"\"") >
 | < ARROW : "->" >
@@ -93,7 +96,6 @@ TOKEN :
 | < COLON : ":" >
 | < SEMI_COLON : ";" >
 | < QUESTION : "?" >
-| < DOT : "." >
 | < IDENTIFIER : (["_","a"-"z","A"-"Z"])+ (["a"-"z","A"-"Z","0"-"9","_"])* >
 }
 
@@ -124,7 +126,8 @@ void variable_declaration():
 void function_declaration():
 {}
 {
-	"."
+	data_type()	< NAME > "(" [data_type() < NAME >] ("," data_type() < NAME >)* ")" sentences()
+	
 }
 
 void data_type():
@@ -164,7 +167,7 @@ void logical_statement():
 void logical_operator():
 {}
 {
-  	"=" {resultStr += "=";}| "<" {resultStr += "<";}| ">" {resultStr += ">";}| "<=" {resultStr += "<=";}| ">="  {resultStr += ">=";}| "!=" {resultStr += "!=";} 
+  	"=" {resultStr += "==";}| "<" {resultStr += "<";}| ">" {resultStr += ">";}| "<=" {resultStr += "<=";}| ">="  {resultStr += ">=";}| "!=" {resultStr += "!=";} 
 }
 
 void binary_operator():
@@ -182,5 +185,11 @@ void sentences():
 void sentence():
 {}
 {
-	( variable_declaration() | logical_statement() | if_statement() | while_statement() | <NAME>)
+	( variable_declaration() | logical_statement() | if_statement() | while_statement() | input_statement() | <NAME>)
+}
+
+void input_statement():
+{}
+{
+  <NAME> "에" <NAME> ("을"|"를") "대입" <DOT> 
 }
