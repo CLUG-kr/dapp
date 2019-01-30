@@ -1,4 +1,9 @@
 #include "iostream"
+int Deohagi(int Keop, double Aekche)
+{
+	Keop = Aekche;
+	return Keop;	
+}
 int main(){
 	if (Da_eumju==Magamil)
 	{
@@ -8,6 +13,7 @@ int main(){
 		}
 		
 	}
+
 	int Kaenkeopi = Bamsaem;	
 
 	return 0;

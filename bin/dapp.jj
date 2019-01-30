@@ -65,6 +65,7 @@ TOKEN :
 |  "을" | "를" | "로" | "으로"
 |  "포함"
 |  "끝"
+|  "당장" | "나와"
 |  "정수형" | "실수형" | "빈형" | "맞니형" | "글자형" | "문장형" 
 |  "생성"
 |  "만약"  | "라면" | "아니고" | "아니면"
@@ -137,10 +138,16 @@ void variable_declaration():
 }
 
 void function_declaration():
-{}
+{Token a = null;}
 {
-   data_type()   < NAME > "(" [data_type() < NAME >] ("," data_type() < NAME >)* ")" sentences()
-   
+    data_type()    a = < NAME > { resultStr += KoreanRomanizer.romanize(a.toString()); }
+    "(" { resultStr += "("; }
+    [data_type() a = < NAME > { resultStr += KoreanRomanizer.romanize(a.toString()); }]
+    ("," { resultStr += ", "; } data_type() a = < NAME > { resultStr += KoreanRomanizer.romanize(a.toString()); })*
+    ")" { resultStr += ")\n"; }
+    "{" { resultStr += indentation() + "{\n"; depth++; }
+    sentences()
+    "}" { depth--; resultStr += indentation(); resultStr += "}\n"; }
 }
 
 void data_type():
@@ -205,16 +212,17 @@ void binary_operator():
 }
 
 void sentences():
-{}
+{boolean single;}
 {
-   ("{"){ resultStr += indentation(); resultStr += "{\n"; depth++; } sentences() ("}") { depth--; resultStr += indentation(); resultStr += "}\n";  }
-   | (sentence())* {resultStr += indentation() + "\n"; }
+    ("{"){ resultStr += indentation(); resultStr += "{\n"; depth++; } sentences() ("}") { depth--; resultStr += indentation(); resultStr += "}\n";  }
+    | {single = true; } ( {if(!single)resultStr += "\n" ;} sentence()  { single = false; })*
+    {resultStr += indentation() + "\n"; }
 }
 
 void sentence():
 {}
 {
-   {resultStr += indentation(); }( variable_declaration() | logical_statement() | if_statement() | while_statement() | input_statement())
+   {resultStr += indentation(); }( variable_declaration() | logical_statement() | if_statement() | while_statement() | input_statement() | return_statement())
 }
 
 void input_statement():
@@ -225,4 +233,12 @@ Token b;
 {
   (a = <NAME>) "에" (b = <NAME>) ("을"|"를") "대입" <DOT>
   {resultStr += KoreanRomanizer.romanize(a.toString()) + " = " + KoreanRomanizer.romanize(b.toString()) + ";"; } 
+}
+
+void return_statement():{Token a;}
+{
+  "당장" a = <NAME> "나와" "!"
+  {
+    resultStr += "return " + KoreanRomanizer.romanize(a.toString()) + ";";
+  }
 }
