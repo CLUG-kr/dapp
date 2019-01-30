@@ -14,6 +14,16 @@ import java.io.*;
 
 public class dapp
 {
+  static int depth = 0;
+  public static String indentation()
+  {
+     String temp = "";
+       for(int i = 0; i<depth; i++)
+       {
+             temp += "\t";
+       }
+       return temp;
+  }
   static String resultStr = "";
   public static void main(String args []) throws ParseException
   {
@@ -119,9 +129,11 @@ void global():
 }
 
 void variable_declaration():
-{}
+{Token a; Token b = null;}
 {
-	data_type() "\'" <NAME> "\'" ["을"|"를"] [ "\'" <NAME> "\'" "로"|"으로"]"생성" "."
+    data_type() "'" a = <NAME> "'" { resultStr += a.toString(); } ["을"|"를"]
+    [ "'" b = <NAME> { resultStr += " = " + b.toString(); } "'" "로"|"으로" ]
+    "생성" "." { resultStr += ";" ;}
 }
 
 void function_declaration():
@@ -152,16 +164,16 @@ void if_statement():
 {}
 {
       "만약" "(" { resultStr += "if ("; }
-      logical_statement() ")" "라면" { resultStr += ") {\n"; }
-      sentences() { resultStr +=" }"; }
+      logical_statement() ")" "라면" { resultStr += ")\n"; }
+      sentences()
       (
         "아니고" "(" { resultStr += " else if ("; }
-        logical_statement() ")" "라면" { resultStr += ") {\n"; }
-        sentences(){ resultStr +=" }" ;}
+        logical_statement() ")" "라면" { resultStr += ")"; }
+        sentences()
       )*
       [(
-        "아니면" { resultStr += " else {\n"; }
-        sentences() { resultStr +=" }"; }
+        "아니면" { resultStr += " else"; }
+        sentences()
       )]
 }
 
@@ -193,14 +205,14 @@ void binary_operator():
 void sentences():
 {}
 {
-	("{"){ resultStr += "{"; } sentences() ("}") {resultStr += "}"; }
-	| (sentence())*
+	("{"){ resultStr += indentation(); resultStr += "{\n"; depth++; resultStr += indentation(); } sentences() ("}") {resultStr += indentation(); resultStr += "}\n"; depth--; resultStr += indentation(); }
+	| (sentence())* {resultStr += "\n"; }
 }
 
 void sentence():
 {}
 {
-	( variable_declaration() | logical_statement() | if_statement() | while_statement() | input_statement())
+	{resultStr += indentation(); }( variable_declaration() | logical_statement() | if_statement() | while_statement() | input_statement())
 }
 
 void input_statement():
