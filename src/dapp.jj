@@ -6,46 +6,35 @@ options
   static = true;
   DEBUG_PARSER = false;
   DEBUG_TOKEN_MANAGER = false;
-  LOOKAHEAD = 5;
+  LOOKAHEAD = 2;
 }
-
 PARSER_BEGIN(dapp)
+
+import java.io.*;
 
 public class dapp
 {
+  static String resultStr = "";
   public static void main(String args []) throws ParseException
   {
     dapp parser = new dapp(System.in);
-    while (true)
-    {
-      System.out.println("갑니다요 : ");
-      try
-      {
-        switch (dapp.one_line())
-        {
-          case 0 : 
-          System.out.println("OK.");
-          break;
-          case 1 : 
-          System.out.println("Goodbye.");
-          break;
-          default : 
-          break;
-        }
-      }
-      catch (Exception e)
-      {
-        System.out.println("NOK.");
-        System.out.println(e.getMessage());
-        dapp.ReInit(System.in);
-      }
-      catch (Error e)
-      {
-        System.out.println("Oops.");
-        System.out.println(e.getMessage());
-        break;
-      }
+    System.out.println("갑니다요 : ");
+  	try {
+      parser.one_line();
+      System.out.println("OK.");
+    } catch(ParseException e) {
+      System.out.println("NOK.");
+      e.printStackTrace();
     }
+
+    try {
+      FileWriter fw = new FileWriter("output.txt");
+      BufferedWriter bw = new BufferedWriter(fw);
+      bw.write(resultStr);
+      bw.close();
+    } catch(Exception e) {
+       e.printStackTrace();
+  	}
   }
 }
 
@@ -108,23 +97,16 @@ TOKEN :
 | < IDENTIFIER : (["_","a"-"z","A"-"Z"])+ (["a"-"z","A"-"Z","0"-"9","_"])* >
 }
 
-int one_line() :
+void one_line() :
 {}
 {
   (preprocessor())* global()
-  {
-    return 0;
-  }
-| ";"
-  {
-    return 1;
-  }
 }
 
-void preprocessor():
-{}
+void preprocessor():{Token t;}
 {
-  ("\"" <NAME> "\"" | "<" <NAME> ">") ("을"|"를") "포함"
+  ("\"" (t = <NAME>) "\"" ("을"|"를") "포함" { resultStr += "#include " + "\"" + t.toString() + "\""; })
+  | ("<" (t = <NAME>) ">" ("을"|"를") "포함" { resultStr += "#include <" + t.toString() + ">"; })
 }
 
 void global():
@@ -154,7 +136,7 @@ void data_type():
 void start():
 {}
 {
-	"시작" sentences()
+	"시작" {resultStr += "int main()" + "\n{" } sentences() {resultStr += "\nreturn 0;\n}"}
 }  
 
 void if_statement():
@@ -174,9 +156,9 @@ void while_statement():
 }
 
 void logical_statement():
-{}
+{Token a; Token b;}
 {
-  <NAME> logical_operator() <NAME>
+  (a = <NAME>) logical_operator() (b = <NAME>) {resultStr += 
 }
 
 void logical_operator():

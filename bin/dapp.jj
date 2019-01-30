@@ -1,18 +1,66 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
- */options{  static = true;
-  DEBUG_PARSER = true;
-  DEBUG_TOKEN_MANAGER = true;
-  LOOKAHEAD = 5;}PARSER_BEGIN(dapp)
-public class dapp{  public static void main(String args []) throws ParseException  {    dapp parser = new dapp(System.in);    while (true)    {      System.out.println("갑니다잉 : ");      try      {        switch (dapp.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        dapp.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(dapp)SKIP :{  " "| "\r"| "\t"| "\n"}
+ */
+options
+{
+  static = true;
+  DEBUG_PARSER = false;
+  DEBUG_TOKEN_MANAGER = false;
+  LOOKAHEAD = 2;
+}
+PARSER_BEGIN(dapp)
+
+import java.io.*;
+
+public class dapp
+{
+  static String resultStr = "";
+  public static void main(String args []) throws ParseException
+  {
+    dapp parser = new dapp(System.in);
+    System.out.println("갑니다요 : ");
+  	try {
+      parser.one_line();
+      System.out.println("OK.");
+    } catch(ParseException e) {
+      System.out.println("NOK.");
+      e.printStackTrace();
+    }
+
+    try {
+      FileWriter fw = new FileWriter("output.txt");
+      BufferedWriter bw = new BufferedWriter(fw);
+      bw.write(resultStr);
+      bw.close();
+    } catch(Exception e) {
+       e.printStackTrace();
+  	}
+  }
+}
+
+PARSER_END(dapp)
+
+SKIP :
+{
+  " "
+| "\r"
+| "\t"
+| "\n"
+}
+
 TOKEN :
 {
    < #LETTER: ["\uAC00" - "\uD7A3"] >
 |  "시작"
-|  "을" | "를"
+|  "을" | "를" | "로" | "으로"
 |  "포함"
 |  "끝"
-}
+|  "정수형" | "실수형" | "빈형" | "맞니형" | "글자형" | "문장형" 
+|  "생성"
+|  "만약"  | "라면" | "아니고" | "아니면"
+| "그치만" | "하면" | "하는걸" | "일 때"
+}
+
 TOKEN :
 {
   < NAME : (<LETTER >)+ >
@@ -48,20 +96,29 @@ TOKEN :
 | < DOT : "." >
 | < IDENTIFIER : (["_","a"-"z","A"-"Z"])+ (["a"-"z","A"-"Z","0"-"9","_"])* >
 }
-int one_line() :{}{  (preprocessor())* global()  {    return 0;  }| ";"  {    return 1;  }}
-void preprocessor():
+
+void one_line() :
 {}
 {
-  ("\"" <NAME> "\"" | "<" <NAME> ">") ("을"|"를") "포함"}
+  (preprocessor())* global()
+}
+
+void preprocessor():{Token t;}
+{
+  ("\"" (t = <NAME>) "\"" ("을"|"를") "포함" { resultStr += "#include " + "\"" + t.toString() + "\""; })
+  | ("<" (t = <NAME>) ">" ("을"|"를") "포함" { resultStr += "#include <" + t.toString() + ">"; })
+}
 
 void global():
 {}
 {
-	(variable_declaration() | function_declaration())* start() (variable_declaration() | function_declaration())* "끝"}
+	(variable_declaration() | function_declaration())* start() (variable_declaration() | function_declaration())* "끝"
+}
 
 void variable_declaration():
 {}
-{	"."
+{
+	data_type() "\'" <NAME> "\'" ["을"|"를"] [ "\'" <NAME> "\'" "로"|"으로"]"생성" "."
 }
 
 void function_declaration():
@@ -70,18 +127,60 @@ void function_declaration():
 	"."
 }
 
+void data_type():
+{}
+{
+  	"정수형" | "실수형" | "빈형" | "맞니형" | "글자형" | "문장형"
+}
+
 void start():
 {}
 {
-	"시작" sentences()}  
+	"시작" {resultStr += "int main()" + "\n{" } sentences() {resultStr += "\nreturn 0;\n}"}
+}  
+
+void if_statement():
+{}
+{
+  	"만약" "(" logical_statement() ")" "라면" sentences()
+  	("아니고" "(" logical_statement() ")" "라면" sentences())*
+  	[("아니면" sentences())]
+}
+
+void while_statement():
+{}
+{
+	"그치만" 
+	( "(" logical_statement() ")" "하면" sentences() "하는걸" "!") |
+	("(" sentences() ")" "일 때" "(" logical_statement() ")" "하면" sentences() "<" sentences() ">" "하는걸" "!")
+}
+
+void logical_statement():
+{Token a; Token b;}
+{
+  (a = <NAME>) logical_operator() (b = <NAME>) {resultStr += 
+}
+
+void logical_operator():
+{}
+{
+  	"=" | "<" | ">" | "<=" | ">="  | "!=" 
+}
+
+void binary_operator():
+{}
+{
+  	"+" | "*" | "-" | "/" | "%" 
+}
+
 void sentences():
 {}
 {
-	"{" sentences() "}"| sentence()
+	"{" sentences() "}"| (sentence())*
 }
 
 void sentence():
 {}
 {
-	<NAME> "."
+	( variable_declaration() | logical_statement() | if_statement() | while_statement() | <NAME>)
 }
