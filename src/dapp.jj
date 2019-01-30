@@ -107,8 +107,9 @@ void one_line() :
 
 void preprocessor():{Token t;}
 {
-  ("\"" (t = <NAME>) "\"" ("을"|"를") "포함" { resultStr += "#include " + "\"" + t.toString() + "\""; })
-  | ("<" (t = <NAME>) ">" ("을"|"를") "포함" { resultStr += "#include <" + t.toString() + ">"; })
+  ("\"" (t = <NAME>) "\"" ("을"|"를") "포함" { resultStr += "#include " + "\"" + t.toString() + "\"" + "\n"; })
+  
+  | ("<" (t = <NAME>) ">" ("을"|"를") "포함" { resultStr += "#include <" + t.toString() + ">" + "\n"; })
 }
 
 void global():
@@ -133,29 +134,42 @@ void function_declaration():
 void data_type():
 {}
 {
-  	"정수형" | "실수형" | "빈형" | "맞니형" | "글자형" | "문장형"
+  	"정수형" {resultStr += "int "; }
+  	| "실수형" { resultStr += "double "; }
+  	| "빈형" { resultStr += "void "; }
+  	| "맞니형" { resultStr += "bool "; }
+  	| "글자형" { resultStr += "char "; }
+  	| "문장형" { resultStr += "string "; }
 }
 
 void start():
 {}
 {
-	"시작" {resultStr += "int main()" + "\n{"; } sentences() {resultStr += "\nreturn 0;\n}";}
+	"시작" {resultStr += "int main()" + "\n"; } sentences() {resultStr += "\nreturn 0;\n";}
 }  
 
 void if_statement():
 {}
 {
-  	"만약" "(" logical_statement() ")" "라면" sentences()
-  	("아니고" "(" logical_statement() ")" "라면" sentences())*
-  	[("아니면" sentences())]
+      "만약" "(" { resultStr += "if ("; }
+      logical_statement() ")" "라면" { resultStr += ") {\n"; }
+      sentences() { resultStr +=" }"; }
+      (
+        "아니고" "(" { resultStr += " else if ("; }
+        logical_statement() ")" "라면" { resultStr += ") {\n"; }
+        sentences(){ resultStr +=" }" ;}
+      )*
+      [(
+        "아니면" { resultStr += " else {\n"; }
+        sentences() { resultStr +=" }"; }
+      )]
 }
 
 void while_statement():
 {}
 {
-	"그치만" 
-	( "(" logical_statement() ")" "하면" sentences() "하는걸" "!") |
-	("(" sentences() ")" "일 때" "(" logical_statement() ")" "하면" sentences() "<" sentences() ">" "하는걸" "!")
+    "그치만" 
+    ( "(" {resultStr += "while (";} logical_statement() ")" "하면" {resultStr += ")\n"; } sentences() "하는걸" "!") //while
 }
 
 void logical_statement():
@@ -179,17 +193,22 @@ void binary_operator():
 void sentences():
 {}
 {
-	"{" sentences() "}"| (sentence())*
+	("{"){ resultStr += "{"; } sentences() ("}") {resultStr += "}"; }
+	| (sentence())*
 }
 
 void sentence():
 {}
 {
-	( variable_declaration() | logical_statement() | if_statement() | while_statement() | input_statement() | <NAME>)
+	( variable_declaration() | logical_statement() | if_statement() | while_statement() | input_statement())
 }
 
 void input_statement():
-{}
 {
-  <NAME> "에" <NAME> ("을"|"를") "대입" <DOT> 
+Token a;
+Token b;
+}
+{
+  (a = <NAME>) "에" (b = <NAME>) ("을"|"를") "대입" <DOT>
+  {resultStr += a.toString() + " = " + b.toString() + ";"; } 
 }
