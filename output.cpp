@@ -14,7 +14,7 @@ int main(){
 
 	}
 
-	Keopijejo(Keop, Keopi);
+	커피제조(컵, 커피);
 
 	return 0;
 }

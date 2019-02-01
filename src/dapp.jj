@@ -212,17 +212,16 @@ void binary_operator():
 }
 
 void sentences():
-{boolean single;}
+{}
 {
     ("{"){ resultStr += indentation(); resultStr += "{\n"; depth++; } sentences() ("}") { depth--; resultStr += indentation(); resultStr += "}\n";  }
-    | {single = true; } ( {if(!single)resultStr += "\n" ;} sentence()  { single = false; })*
-    {resultStr += indentation() + "\n"; }
+    | (sentence() {resultStr += "\n";})*
 }
 
 void sentence():
 {}
 {
-   {resultStr += indentation(); }( variable_declaration() | logical_statement() | if_statement() | while_statement() | input_statement() | return_statement())
+   {resultStr += indentation(); }( variable_declaration() | logical_statement() | if_statement() | while_statement() | input_statement() | return_statement() | call_statement())
 }
 
 void input_statement():
@@ -241,4 +240,14 @@ void return_statement():{Token a;}
   {
     resultStr += "return " + KoreanRomanizer.romanize(a.toString()) + ";";
   }
+}
+
+void call_statement():{Token a;}
+{
+    a = < NAME > { resultStr += KoreanRomanizer.romanize(a.toString()); }
+      "(" { resultStr += "("; }
+    [a = < NAME > { resultStr += KoreanRomanizer.romanize(a.toString()); }]
+    ("," { resultStr += ", "; } a = < NAME > { resultStr += KoreanRomanizer.romanize(a.toString()); })*
+    ")" 
+    "."{ resultStr += ");"; }
 }
